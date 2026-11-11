@@ -1,0 +1,16 @@
+# Cases where this library knowingly behaves differently from Go.
+# The test suite checks that each one still differs, so the list stays true.
+#
+# A nil that is an element of a list or map being ranged over: Go keeps it as
+# a typed nil and refuses to look up a field on it. Here it is an ordinary nil
+# and the lookup yields no value.
+["{{range .}}{{.a}}{{end}}", [null]]
+["{{range .}}{{.a}}{{end}}", {"k": null}]
+["{{range $i, $v := .}}{{$v.a}}{{end}}", [null]]
+# Complex number literals are not supported.
+["{{1i}}", null]
+["{{print 2.5i}}", null]
+# Escapes that produce a single byte above 0x7f would make a string that is
+# not valid UTF-8. They are rejected here; Go accepts them.
+["{{len \"\\xff\"}}", null]
+["{{len \"\\377\"}}", null]

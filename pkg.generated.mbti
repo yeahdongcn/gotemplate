@@ -1,0 +1,48 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "yeahdongcn/gotemplate"
+
+import {
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn render(String, Value) -> String raise TemplateError
+
+// Errors
+pub(all) suberror TemplateError {
+  ParseError(Int32, String)
+  ExecError(String)
+}
+pub fn TemplateError::output(Self, &Logger) -> Unit
+pub fn TemplateError::to_string(Self) -> String
+pub impl Show for TemplateError
+
+// Types and methods
+pub(all) struct Func((Array[Value]) -> Value raise TemplateError)
+
+type Template
+pub fn Template::add_funcs(Self, Map[String, Func]) -> Self
+pub fn Template::defined_templates(Self) -> Array[String]
+pub fn Template::error_on_missing_key(Self, Bool) -> Self
+pub fn Template::execute(Self, Value) -> String raise TemplateError
+pub fn Template::execute_template(Self, String, Value) -> String raise TemplateError
+pub fn Template::new(String) -> Self
+pub fn Template::parse(Self, String) -> Self raise TemplateError
+
+#derive(Eq)
+pub(all) enum Value {
+  Nil
+  Bool(Bool)
+  Int(Int64)
+  Float(Double)
+  Str(String)
+  List(Array[Value])
+  Dict(Map[String, Value])
+}
+pub fn Value::equal(Self, Self) -> Bool
+pub fn Value::from_json(@json.Json) -> Self
+pub fn Value::not_equal(Self, Self) -> Bool
+
+// Type aliases
+
+// Traits

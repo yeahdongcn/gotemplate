@@ -1,0 +1,6 @@
+import {
+  "yeahdongcn/gotemplate" @lib,
+  "moonbitlang/core/json",
+}
+
+pkgtype(kind: "executable")
