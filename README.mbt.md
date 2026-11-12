@@ -65,7 +65,7 @@ At the moment that is 1118 cases, all matching Go 1.27, on the `wasm`,
 adding cases:
 
 ```
-cd tools/oracle && go run .
+cd tools/oracle && go run . && cd ../.. && moon fmt
 moon test
 ```
 

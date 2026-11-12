@@ -1,0 +1,53 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Check
+        run: |
+          moon version --all
+          moon check --deny-warn
+          moon fmt --check
+
+      - name: Test on every backend
+        run: |
+          for target in wasm wasm-gc js native; do
+            echo "== $target"
+            moon test --target "$target"
+          done
+
+  # The expected outcomes in conformance_data_test.mbt must be exactly what
+  # the Go reference implementation produces for the cases in the repository.
+  oracle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - name: Set up MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Regenerate expectations with Go
+        run: |
+          (cd tools/oracle && go run .)
+          moon fmt
+      - name: Fail if they differ from what is committed
+        run: git diff --exit-code -- conformance_data_test.mbt
